@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Models\" />
+    <Folder Include="Models\V1\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
