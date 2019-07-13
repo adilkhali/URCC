@@ -25,6 +25,8 @@ namespace United_Remote_Coding_Challeng
             {
                 c.SwaggerDoc("v1", new Info { Title = "United Remote CC BackEnd API", Version = "v1" });
             });
+
+            services.AddApiVersioning();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -50,12 +52,7 @@ namespace United_Remote_Coding_Challeng
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }

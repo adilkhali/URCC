@@ -7,8 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UnitedRemote.Web.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Represents a RESTful service of orders.
+    /// </summary>
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ValuesController : ControllerBase
     {
         // GET api/values
