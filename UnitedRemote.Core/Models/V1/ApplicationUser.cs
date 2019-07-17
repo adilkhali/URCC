@@ -7,7 +7,8 @@ namespace UnitedRemote.Core.Models.V1
 {
     public class ApplicationUser : IdentityUser
     {
-        public string Location { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
     }
 }

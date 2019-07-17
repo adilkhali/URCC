@@ -102,6 +102,7 @@ namespace United_Remote_Coding_Challeng
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+            app.UseStatusCodePages();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

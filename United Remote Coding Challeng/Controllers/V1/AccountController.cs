@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using UnitedRemote.Core.Models.V1;
+using UnitedRemote.Core.ViewModels;
 
 namespace UnitedRemote.Web.Controllers.V1
 {
@@ -30,44 +31,40 @@ namespace UnitedRemote.Web.Controllers.V1
             _signInManager = signInManager;
             _configuration = configuration;
         }
+
         [HttpPost]
-        public async Task<object> Login([FromBody] LoginDto model)
+        public async Task<object> Login([FromBody] LoginViewModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
             if (result.Succeeded)
             {
-                var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                return GenerateJwtToken(model.Email, appUser);
+                var user = await _userManager.FindByNameAsync(model.Email);
+                return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user)};
             }
 
-            throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
+            return BadRequest("Invalid Email Adresse or Password");
         }
 
         [HttpPost]
-        public async Task<object> Register([FromBody] RegisterDto model)
+        public async Task<object> Register([FromBody] RegisterViewModel model)
         {
             var user = new ApplicationUser
             {
+                FirstName = model.Firstname,
+                LastName = model.Lastname,
                 UserName = model.Email,
-                Email = model.Email
+                Email = model.Email,
+                PhoneNumber = model.Mobile
             };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return GenerateJwtToken(model.Email, user);
+                return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user) };
             }
-
-            throw new ApplicationException("UNKNOWN_ERROR");
-        }
-
-        [Authorize]
-        [HttpGet]
-        public object Protected()
-        {
-            return "Protected area";
+            return BadRequest("Invalid Email Adresse or Password");
         }
 
         private object GenerateJwtToken(string email, ApplicationUser user)
@@ -94,24 +91,5 @@ namespace UnitedRemote.Web.Controllers.V1
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public class LoginDto
-        {
-            [Required]
-            public string Email { get; set; }
-
-            [Required]
-            public string Password { get; set; }
-
-        }
-
-        public class RegisterDto
-        {
-            [Required]
-            public string Email { get; set; }
-
-            [Required]
-            [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]
-            public string Password { get; set; }
-        }
     }
 }
