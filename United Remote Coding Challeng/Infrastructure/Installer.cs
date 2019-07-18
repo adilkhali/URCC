@@ -11,6 +11,8 @@ using UnitedRemote.Core;
 using UnitedRemote.Core.Helpers;
 using UnitedRemote.Core.Helpers.ErrorHandler;
 using UnitedRemote.Core.Models.V1;
+using UnitedRemote.Core.Repositories;
+using UnitedRemote.Core.Repositories.Interfaces;
 
 namespace United_Remote_Coding_Challeng.Infrastructure
 {
@@ -29,6 +31,7 @@ namespace United_Remote_Coding_Challeng.Infrastructure
 
             // IOC
             services.AddTransient<IErrorHandler, ErrorHandler>();
+            services.AddTransient<IUsersRepository, UsersRepository>();
         }
 
         public static void ConfigureSwagger(IServiceCollection services)

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using UnitedRemote.Core.Helpers;
 using UnitedRemote.Core.Models.V1;
+using UnitedRemote.Core.Repositories.Interfaces;
 using UnitedRemote.Core.ViewModels;
 
 namespace UnitedRemote.Web.Controllers.V1
@@ -24,17 +25,18 @@ namespace UnitedRemote.Web.Controllers.V1
     public class AccountController : ControllerBase
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUsersRepository _usersRepository;
+
         private readonly IErrorHandler _errorHandler;
         private readonly IConfiguration _configuration;
 
-        public AccountController( 
-            UserManager<ApplicationUser> userManager,
+        public AccountController(
+            IUsersRepository usersRepository,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             IErrorHandler errorHandler)
         {
-            _userManager = userManager;
+            _usersRepository = usersRepository;
             _signInManager = signInManager;
             _configuration = configuration;
             _errorHandler = errorHandler;
@@ -54,7 +56,7 @@ namespace UnitedRemote.Web.Controllers.V1
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(model.Email);
+                var user = await _usersRepository.GetByEmailAsync(model.Email);
                 return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user)};
             }
 
@@ -79,12 +81,17 @@ namespace UnitedRemote.Web.Controllers.V1
                 Email = model.Email,
                 PhoneNumber = model.Mobile
             };
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _usersRepository.Create(user, model.Password);
 
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
                 return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user) };
+            }
+
+            if (result.Errors.Count() > 0)
+            {
+                return BadRequest(result.Errors);
             }
 
             throw new HttpRequestException(_errorHandler.GetMessage(ErrorMessagesEnum.AuthCannotCreate));

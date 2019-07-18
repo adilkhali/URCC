@@ -12,8 +12,6 @@ namespace UnitedRemote.Core.Models.V1
         public string Message { get; set; }
         public string Exception { get; set; }
 
-        // other fields
-
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
