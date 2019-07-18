@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using UnitedRemote.Core.Helpers;
 using UnitedRemote.Core.Models.V1;
 using UnitedRemote.Core.ViewModels;
 
@@ -23,18 +25,31 @@ namespace UnitedRemote.Web.Controllers.V1
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IErrorHandler _errorHandler;
         private readonly IConfiguration _configuration;
 
-        public AccountController( UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration )
+        public AccountController( 
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration,
+            IErrorHandler errorHandler)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _errorHandler = errorHandler;
         }
 
         [HttpPost]
         public async Task<object> Login([FromBody] LoginViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpRequestException(string.Format(
+                    _errorHandler.GetMessage(ErrorMessagesEnum.ModelValidation),
+                    ModelState.Values.First().Errors.First().ErrorMessage));
+            }
+
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
             if (result.Succeeded)
@@ -43,12 +58,19 @@ namespace UnitedRemote.Web.Controllers.V1
                 return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user)};
             }
 
-            return BadRequest("Invalid Email Adresse or Password");
+            throw new HttpRequestException(_errorHandler.GetMessage(ErrorMessagesEnum.AuthWrongCredentials));
         }
 
         [HttpPost]
         public async Task<object> Register([FromBody] RegisterViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                throw new HttpRequestException(string.Format(
+                    _errorHandler.GetMessage(ErrorMessagesEnum.ModelValidation),
+                    ModelState.Values.First().Errors.First().ErrorMessage));
+            }
+
             var user = new ApplicationUser
             {
                 FirstName = model.Firstname,
@@ -64,7 +86,8 @@ namespace UnitedRemote.Web.Controllers.V1
                 await _signInManager.SignInAsync(user, false);
                 return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user) };
             }
-            return BadRequest("Invalid Email Adresse or Password");
+
+            throw new HttpRequestException(_errorHandler.GetMessage(ErrorMessagesEnum.AuthCannotCreate));
         }
 
         private object GenerateJwtToken(string email, ApplicationUser user)
