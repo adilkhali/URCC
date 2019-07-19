@@ -16,6 +16,7 @@ using UnitedRemote.Core.Helpers;
 using UnitedRemote.Core.Models.V1;
 using UnitedRemote.Core.Repositories.Interfaces;
 using UnitedRemote.Core.ViewModels;
+using UnitedRemote.Core.ViewModels.Authentication;
 
 namespace UnitedRemote.Web.Controllers.V1
 {
@@ -43,7 +44,7 @@ namespace UnitedRemote.Web.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<object> Login([FromBody] LoginViewModel model)
+        public async Task<LogedInViewModel> Login([FromBody] LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -57,14 +58,14 @@ namespace UnitedRemote.Web.Controllers.V1
             if (result.Succeeded)
             {
                 var user = await _usersRepository.GetByEmailAsync(model.Email);
-                return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user)};
+                return new LogedInViewModel { FullName = $"{user.FirstName} {user.LastName}", Token = GenerateJwtToken(model.Email, user)};
             }
 
             throw new HttpRequestException(_errorHandler.GetMessage(ErrorMessagesEnum.AuthWrongCredentials));
         }
 
         [HttpPost]
-        public async Task<object> Register([FromBody] RegisterViewModel model)
+        public async Task<LogedInViewModel> Register([FromBody] RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -86,12 +87,7 @@ namespace UnitedRemote.Web.Controllers.V1
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return new { fullName = $"{user.FirstName} {user.LastName}", token = GenerateJwtToken(model.Email, user) };
-            }
-
-            if (result.Errors.Count() > 0)
-            {
-                return BadRequest(result.Errors);
+                return new LogedInViewModel { FullName = $"{user.FirstName} {user.LastName}", Token = GenerateJwtToken(model.Email, user) };
             }
 
             throw new HttpRequestException(_errorHandler.GetMessage(ErrorMessagesEnum.AuthCannotCreate));
