@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using United_Remote_Coding_Challeng.Configuration;
 using United_Remote_Coding_Challeng.Infrastructure;
 using United_Remote_Coding_Challeng.Infrastructure.Middlewares;
@@ -25,7 +27,7 @@ namespace United_Remote_Coding_Challeng
             // Enable Cros
             services.AddCors();
 
-            Installer.ConfigureDataBase(services);
+            Installer.ConfigureDataBase(services, Configuration);
             // Add Jwt Authentication
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             Installer.ConfigureAuthentication(services, Configuration);
@@ -49,6 +51,7 @@ namespace United_Remote_Coding_Challeng
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()

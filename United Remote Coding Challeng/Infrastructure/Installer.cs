@@ -19,10 +19,16 @@ namespace United_Remote_Coding_Challeng.Infrastructure
     internal static class Installer
     {
 
-        public static void ConfigureDataBase(IServiceCollection services)
+        public static void ConfigureDataBase(IServiceCollection services, IConfiguration configuration)
         {
             // Add DbContext 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("URcc"));
+
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"),
+                x => x.UseNetTopologySuite())
+            );
+
+
             // Add Identity
             services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>();
 
