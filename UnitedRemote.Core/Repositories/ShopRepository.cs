@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnitedRemote.Core.Models.V1;
+using UnitedRemote.Core.Repositories.Interfaces;
 
 namespace UnitedRemote.Core.Repositories
 {
-    class ShopRepository : Repository<Shop>
+    public class ShopRepository : Repository<Shop> , IShopRepository
     {
         public ShopRepository(DbContext context) :base(context)
         {
