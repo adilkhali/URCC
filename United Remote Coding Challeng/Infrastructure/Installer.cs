@@ -36,8 +36,12 @@ namespace United_Remote_Coding_Challeng.Infrastructure
 
 
             // IOC
+            
+            services.AddTransient<DbContext, ApplicationDbContext>();
             services.AddTransient<IErrorHandler, ErrorHandler>();
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IShopRepository, ShopRepository>();
+
         }
 
         public static void ConfigureSwagger(IServiceCollection services)
