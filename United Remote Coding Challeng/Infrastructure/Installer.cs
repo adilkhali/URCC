@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -38,9 +40,12 @@ namespace United_Remote_Coding_Challeng.Infrastructure
             // IOC
             
             services.AddTransient<DbContext, ApplicationDbContext>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IErrorHandler, ErrorHandler>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<IShopRepository, ShopRepository>();
+            services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+            
 
         }
 
