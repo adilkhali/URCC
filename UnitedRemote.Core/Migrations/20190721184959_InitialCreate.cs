@@ -5,7 +5,7 @@ using NetTopologySuite.Geometries;
 
 namespace UnitedRemote.Core.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,13 +42,26 @@ namespace UnitedRemote.Core.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shop",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    Location = table.Column<Point>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shop", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,24 +171,27 @@ namespace UnitedRemote.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Shop",
+                name: "FavoriteShops",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 50, nullable: false),
-                    Location = table.Column<Point>(nullable: false),
-                    ApplicationUserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: false),
+                    ShopId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shop", x => x.Id);
+                    table.PrimaryKey("PK_FavoriteShops", x => new { x.UserId, x.ShopId });
                     table.ForeignKey(
-                        name: "FK_Shop_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_FavoriteShops_Shop_ShopId",
+                        column: x => x.ShopId,
+                        principalTable: "Shop",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FavoriteShops_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -218,9 +234,9 @@ namespace UnitedRemote.Core.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shop_ApplicationUserId",
-                table: "Shop",
-                column: "ApplicationUserId");
+                name: "IX_FavoriteShops_ShopId",
+                table: "FavoriteShops",
+                column: "ShopId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -241,10 +257,13 @@ namespace UnitedRemote.Core.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Shop");
+                name: "FavoriteShops");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Shop");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
