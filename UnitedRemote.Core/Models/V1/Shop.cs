@@ -6,7 +6,8 @@ namespace UnitedRemote.Core.Models.V1
 {
     public class Shop
     {
-        public int ID { get; set; }
+        [Key]
+        public int Id { get; internal set; }
 
         [Required]
         [Display(Name = "Shop's name")]
