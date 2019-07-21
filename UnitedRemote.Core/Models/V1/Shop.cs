@@ -1,5 +1,6 @@
 ﻿
 using NetTopologySuite.Geometries;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace UnitedRemote.Core.Models.V1
@@ -17,5 +18,7 @@ namespace UnitedRemote.Core.Models.V1
         [Display(Name = "Shop's location")]
         [Required]
         public Point Location { get; set; }
+
+        public virtual ICollection<FavoriteShops> LikedShops { get; set; }
     }
 }
