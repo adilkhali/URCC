@@ -192,7 +192,7 @@ namespace UnitedRemote.Core.Migrations
 
             modelBuilder.Entity("UnitedRemote.Core.Models.V1.Shop", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -205,7 +205,7 @@ namespace UnitedRemote.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 

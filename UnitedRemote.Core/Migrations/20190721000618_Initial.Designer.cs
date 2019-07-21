@@ -11,8 +11,8 @@ using UnitedRemote.Core;
 namespace UnitedRemote.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190720200358_CreateDB")]
-    partial class CreateDB
+    [Migration("20190721000618_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -194,7 +194,7 @@ namespace UnitedRemote.Core.Migrations
 
             modelBuilder.Entity("UnitedRemote.Core.Models.V1.Shop", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -207,7 +207,7 @@ namespace UnitedRemote.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 

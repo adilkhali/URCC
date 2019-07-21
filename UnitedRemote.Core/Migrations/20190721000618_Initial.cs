@@ -5,7 +5,7 @@ using NetTopologySuite.Geometries;
 
 namespace UnitedRemote.Core.Migrations
 {
-    public partial class CreateDB : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -161,7 +161,7 @@ namespace UnitedRemote.Core.Migrations
                 name: "Shop",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
                     Location = table.Column<Point>(nullable: false),
@@ -169,7 +169,7 @@ namespace UnitedRemote.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shop", x => x.ID);
+                    table.PrimaryKey("PK_Shop", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Shop_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
