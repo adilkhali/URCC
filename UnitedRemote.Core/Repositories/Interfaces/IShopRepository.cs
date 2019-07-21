@@ -8,5 +8,6 @@ namespace UnitedRemote.Core.Repositories.Interfaces
     public interface IShopRepository :IRepository<Shop>
     {
         List<Shop> GetNearbyShops(double latitude, double longitude, double searchRadious);
+        List<Shop> GetSortedShops(double longitude, double latitude);
     }
 }

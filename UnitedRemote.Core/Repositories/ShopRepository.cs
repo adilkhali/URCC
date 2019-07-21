@@ -15,9 +15,21 @@ namespace UnitedRemote.Core.Repositories
         {
         }
 
-        public List<Shop> GetNearbyShops(double latitude, double longitude, double searchRadious)
+        public List<Shop> GetSortedShops(double longitude, double latitude)
         {
-            Point userLocation = new Point(latitude, longitude);
+            Point userLocation = new Point(longitude, latitude)
+            {
+                SRID = 4326
+            };
+            return _entities.OrderBy(shop => shop.Location.Distance(userLocation)).ToList();
+        }
+
+        public List<Shop> GetNearbyShops( double longitude, double latitude, double searchRadious)
+        {
+            Point userLocation = new Point(longitude, latitude)
+            {
+                SRID = 4326
+            };
             return _entities.Where(x => x.Location.Distance(userLocation) <= searchRadious).ToList();
         }
     }

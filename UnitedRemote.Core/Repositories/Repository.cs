@@ -22,34 +22,39 @@ namespace UnitedRemote.Core.Repositories
         public virtual void Add(TEntity entity)
         {
             _entities.Add(entity);
+            _context.SaveChanges();
         }
 
         public virtual void AddRange(IEnumerable<TEntity> entities)
         {
             _entities.AddRange(entities);
+            _context.SaveChanges();
         }
 
 
         public virtual void Update(TEntity entity)
         {
             _entities.Update(entity);
+            _context.SaveChanges();
         }
 
         public virtual void UpdateRange(IEnumerable<TEntity> entities)
         {
             _entities.UpdateRange(entities);
+            _context.SaveChanges();
         }
-
 
 
         public virtual void Remove(TEntity entity)
         {
             _entities.Remove(entity);
+            _context.SaveChanges();
         }
 
         public virtual void RemoveRange(IEnumerable<TEntity> entities)
         {
             _entities.RemoveRange(entities);
+            _context.SaveChanges();
         }
 
 
