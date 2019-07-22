@@ -20,17 +20,17 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="Filters\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="Filters\**" />
+    <EmbeddedResource Remove="Filters\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="Filters\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UnitedRemote.Core\UnitedRemote.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Filters\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
