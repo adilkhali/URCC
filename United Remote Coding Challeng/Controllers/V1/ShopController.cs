@@ -91,7 +91,7 @@ namespace UnitedRemote.Web.Controllers
         public ActionResult<ShopViewModel> Get(int id)
         {
             var selectedShop = _shopRepository.Get(id);
-            if (selectedShop != null)
+            if (selectedShop == null)
             {
                 return NoContent();
             }
